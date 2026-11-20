@@ -1,0 +1,30 @@
+name: Daily README Streak Update
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs automatically every day at 00:00 UTC
+  workflow_dispatch: # Lets you click a button to test it manually anytime
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Gives the bot permission to save changes to your repo
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Update README file
+        run: |
+          echo "- Updated on $(date -u)" >> README.md
+
+      - name: Commit and push changes
+        run: |
+          git add README.md
+          git commit -m "chore: daily automated streak update [skip ci]" || echo "No changes to commit"
+          git push
